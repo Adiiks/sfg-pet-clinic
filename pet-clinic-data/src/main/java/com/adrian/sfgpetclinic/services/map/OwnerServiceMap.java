@@ -2,12 +2,19 @@ package com.adrian.sfgpetclinic.services.map;
 
 import com.adrian.sfgpetclinic.model.Owner;
 import com.adrian.sfgpetclinic.services.OwnerService;
+import com.adrian.sfgpetclinic.services.PetService;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 @Service
 public class OwnerServiceMap extends AbstractMapService<Owner, Long> implements OwnerService {
+
+    private final PetService petService;
+
+    public OwnerServiceMap(PetService petService) {
+        this.petService = petService;
+    }
 
     @Override
     public Set<Owner> findAll() {
@@ -26,7 +33,18 @@ public class OwnerServiceMap extends AbstractMapService<Owner, Long> implements 
 
     @Override
     public Owner save(Owner owner) {
-        return super.save(owner);
+        if (owner != null) {
+            if (owner.getPets() != null) {
+                owner.getPets().forEach(pet -> {
+                    if (pet.getId() == null) {
+                        pet.setId(petService.save(pet).getId());
+                    }
+                });
+            }
+            return super.save(owner);
+        } else {
+            return null;
+        }
     }
 
     @Override
