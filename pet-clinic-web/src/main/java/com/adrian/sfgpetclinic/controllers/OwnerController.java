@@ -1,9 +1,13 @@
 package com.adrian.sfgpetclinic.controllers;
 
+import com.adrian.sfgpetclinic.model.Owner;
 import com.adrian.sfgpetclinic.services.OwnerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/owners")
@@ -25,5 +29,16 @@ public class OwnerController {
     @RequestMapping("/find")
     public String findOwner() {
         return "notImplemented";
+    }
+
+    @GetMapping("/{ownerId}")
+    public ModelAndView showOwner(@PathVariable Long ownerId) {
+
+        ModelAndView mav = new ModelAndView("owners/ownerDetails");
+
+        Owner owner = ownerService.findById(ownerId);
+        mav.addObject(owner);
+
+        return mav;
     }
 }
