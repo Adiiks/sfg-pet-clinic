@@ -9,9 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -109,5 +107,20 @@ class OwnerSDJpaServiceTest {
 
         assertEquals(LAST_NAME, smith.getLastName());
         verify(ownerRepository, times(1)).findByLastName(anyString());
+    }
+
+    @Test
+    void findAllByLastNameLike() {
+
+        List<Owner> owners = new ArrayList<>();
+        owners.add(Owner.builder().id(ID).lastName(LAST_NAME).build());
+        owners.add(Owner.builder().id(ID + 1).lastName(LAST_NAME + 'a').build());
+
+        when(ownerRepository.findAllByLastNameLike(anyString())).thenReturn(owners);
+
+        List<Owner> returnedOwners = ownerService.findAllByLastNameLike(LAST_NAME);
+
+        assertEquals(2, returnedOwners.size());
+        verify(ownerRepository, times(1)).findAllByLastNameLike(anyString());
     }
 }
